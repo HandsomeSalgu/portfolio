@@ -39,11 +39,14 @@ const { step } = useIntro()
       >
         {{ profile.tagline }}
       </p>
+      <!-- 이름 강조: 이름은 크고 진하게, "입니다"는 작고 옅게 낮춰 대비를 만든다 -->
       <h1
-        class="mt-1 text-5xl font-extrabold tracking-tight text-accent transition-all duration-700 ease-out-expo sm:text-6xl md:text-[5rem] md:leading-[1.15]"
+        class="mt-1 text-5xl font-extrabold tracking-tight transition-all duration-700 ease-out-expo sm:text-6xl md:text-[5rem] md:leading-[1.15]"
         :class="step >= 4 ? 'opacity-100' : 'translate-y-3 opacity-0'"
       >
-        {{ profile.name }}입니다
+        <span class="text-accent">{{ profile.name }}</span><span
+          class="text-[0.5em] font-bold text-content-muted"
+        >입니다</span>
       </h1>
     </div>
   </section>
