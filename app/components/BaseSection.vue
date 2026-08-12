@@ -16,7 +16,7 @@ defineProps<{
     :aria-labelledby="`${id}-heading`"
   >
     <div class="mx-auto max-w-content border-t border-accent/25 py-16 md:py-24">
-      <div class="grid gap-10 md:grid-cols-[14rem_1fr] md:gap-16">
+      <div class="grid gap-10 md:grid-cols-[12rem_1fr] md:gap-8">
         <!-- 제목은 스크롤 중에도 붙어 있어서 지금 어느 섹션인지 계속 보이게 한다 -->
         <div class="md:sticky md:top-[calc(var(--spacing-header)+3rem)] md:self-start">
           <p class="font-mono text-xs tracking-widest text-accent/50">

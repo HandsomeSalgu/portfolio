@@ -5,6 +5,8 @@ import { navItems, socialLinks } from '~/data/portfolio'
 
 const { active } = useScrollSpy(navItems.map((item) => item.id))
 const { resolved, toggle } = useTheme()
+// 인트로 연출이 끝난 뒤에 나타난다
+const { done: introDone } = useIntro()
 
 const icons: Record<string, Component> = {
   github: IconGithub,
@@ -16,7 +18,10 @@ const menuOpen = ref(false)
 </script>
 
 <template>
-  <header class="fixed inset-x-0 top-0 z-50 bg-surface">
+  <header
+    class="fixed inset-x-0 top-0 z-50 backdrop-blur-xs transition-opacity duration-700"
+    :class="introDone ? 'opacity-100' : 'pointer-events-none opacity-0'"
+  >
     <div class="relative flex h-header items-center px-6 lg:px-8">
       <!-- 로고: 맨 위로 -->
       <a
@@ -34,10 +39,12 @@ const menuOpen = ref(false)
       >
         <ul class="flex items-center gap-10 lg:gap-[4.5rem]">
           <li v-for="item in navItems" :key="item.id">
+            <!-- 밑줄: ::after 를 scaleX 0→1 로 키운다. origin-left 라 왼쪽에서 오른쪽으로 자란다.
+                 호버 시 그어지고, 현재 보고 있는 섹션(active)에는 계속 남는다. -->
             <a
               :href="`#${item.id}`"
-              class="text-[0.9375rem] text-accent transition-opacity hover:opacity-60"
-              :class="active === item.id ? 'font-semibold' : 'font-normal'"
+              class="relative text-[0.9375rem] text-accent after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:origin-left after:bg-current after:transition-transform after:duration-300 after:ease-out-expo hover:after:scale-x-100"
+              :class="active === item.id ? 'font-semibold after:scale-x-100' : 'font-normal after:scale-x-0'"
               :aria-current="active === item.id ? 'true' : undefined"
             >{{ item.label }}</a>
           </li>
@@ -91,7 +98,7 @@ const menuOpen = ref(false)
     <nav
       v-show="menuOpen"
       id="mobile-nav"
-      class="border-t border-line bg-surface md:hidden"
+      class="border-t border-line bg-surface/90 backdrop-blur-sm md:hidden"
       aria-label="주요 섹션"
     >
       <ul class="flex flex-col px-6 py-2">

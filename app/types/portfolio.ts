@@ -1,6 +1,8 @@
 export interface Profile {
   name: string
-  /** 히어로에 크게 들어가는 한 줄. 예: "문제를 끝까지 파고드는 프론트엔드 개발자" */
+  /** 인트로 첫 박자에 홀로 뜨는 인사말 */
+  greeting: string
+  /** 인사말 옆으로 이어붙는 소개 한 줄 */
   tagline: string
   /** 소개 문단. 줄바꿈 단위로 배열 */
   bio: string[]
@@ -56,5 +58,7 @@ export interface ExperienceItem {
   organization: string
   position: string
   period: string
+  /** 타임라인 색 구분 — 근무는 accent, 교육은 밝은 톤 */
+  type: 'work' | 'education'
   description?: string[]
 }

@@ -76,6 +76,10 @@
   html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+    /* 인트로 중 스크롤 잠금이 풀리는 순간 스크롤바가 생기며
+       뷰포트 폭이 줄어 중앙 정렬 콘텐츠가 왼쪽으로 튀는 것을 막는다.
+       스크롤바 유무와 무관하게 그 자리를 항상 예약해둔다. */
+    scrollbar-gutter: stable;
   }
 
   /* 접근성: 모션 최소화를 켠 사용자에겐 스크롤 애니메이션을 끈다 */
