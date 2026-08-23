@@ -42,11 +42,13 @@ import { sortedProjects } from '~/data/portfolio'
 
         <!-- 카드 높이가 달라도 스택/링크는 항상 바닥에 붙는다 -->
         <div class="mt-auto pt-6">
-          <ul class="flex flex-wrap gap-x-2 gap-y-1">
+          <!-- 구분자 없이 띄워두면 "Java Spring Boot MyBatis" 가 한 덩어리로 읽힌다.
+               ::after 로 가운뎃점을 넣고 마지막 항목만 뺀다 (gap-x 대신 마진이 간격 담당) -->
+          <ul class="flex flex-wrap gap-y-1">
             <li
               v-for="tech in project.techStack"
               :key="tech"
-              class="font-mono text-[0.625rem] text-content-subtle"
+              class="font-mono text-[0.625rem] text-content-subtle after:mx-1.5 after:text-accent/40 after:content-['·'] last:after:content-none"
             >
               {{ tech }}
             </li>

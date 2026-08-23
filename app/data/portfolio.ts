@@ -9,6 +9,14 @@ import type {
 // TODO(콘텐츠): 아래 값들은 전부 채워 넣어야 하는 자리표시자다.
 // 구조를 먼저 확정해두고 실제 내용은 나중에 교체한다.
 
+/**
+ * ⚠️ 배포 도메인으로 반드시 교체할 것. 끝에 슬래시를 붙이지 않는다.
+ *
+ * OG 이미지 · canonical 은 절대 URL 만 허용하므로, 이 값이 틀리면 카카오톡 ·
+ * 링크드인 · 슬랙에서 미리보기 이미지가 깨진다 (제목 · 설명은 그래도 나온다).
+ */
+export const siteUrl = 'https://portfolio-handsomesalgu.vercel.app'
+
 /** 한 페이지 내 앵커 이동용. id 는 각 섹션 엘리먼트의 id 와 일치해야 한다. */
 export const navItems = [
   { id: 'about', label: 'About Me' },
@@ -171,7 +179,13 @@ export const experience: ExperienceItem[] = [
   },
 ]
 
-/** 시작일 기준 오름차순(오래된 것부터). period 가 'YYYY.MM.DD - ...' 형태라는 전제 */
+/**
+ * 시작일 기준 내림차순(최신부터). period 가 'YYYY.MM.DD - ...' 형태라는 전제.
+ *
+ * 카드 그리드의 첫 칸을 가장 최근 프로젝트가 차지한다 — 보는 사람은 왼쪽 위부터
+ * 읽고, 대개 그 한 장으로 판단을 끝낸다. 오래된 것부터 깔면 가장 강한 카드가
+ * 맨 끝 칸으로 밀린다.
+ */
 export const sortedProjects: Project[] = [...projects].sort((a, b) =>
-  a.period.localeCompare(b.period),
+  b.period.localeCompare(a.period),
 )

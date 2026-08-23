@@ -1,5 +1,21 @@
 <script setup lang="ts">
 import { experience, profile } from '~/data/portfolio'
+
+// 타임라인 상세 카드의 열림 상태.
+//
+// 원래는 CSS group-hover / group-focus-within 만으로 처리했는데, 그러면
+// 터치 기기에서 동작이 브라우저마다 갈리고(hover 가 없거나 흉내만 냄) 버튼을
+// 눌러도 아무 일이 없다. 그래서 상태를 JS 로 끌어올렸다.
+//   · hovered — 마우스 / 키보드 포커스로 잠깐 열리는 쪽
+//   · pinned  — 클릭 · 탭으로 고정해두는 쪽 (포커스가 빠져도 남는다)
+const hovered = ref<number | null>(null)
+const pinned = ref<number | null>(null)
+
+const isOpen = (i: number) => pinned.value === i || hovered.value === i
+
+function togglePin(i: number) {
+  pinned.value = pinned.value === i ? null : i
+}
 </script>
 
 <template>
@@ -13,6 +29,8 @@ import { experience, profile } from '~/data/portfolio'
             v-if="profile.avatar"
             :src="profile.avatar"
             :alt="`${profile.name} 프로필 사진`"
+            width="389"
+            height="500"
             class="size-full object-cover"
           >
           <div
@@ -61,7 +79,7 @@ import { experience, profile } from '~/data/portfolio'
       <!-- 경력 · 교육 가로 타임라인.
            각 항목이 줄의 1/N 구간을 차지하고, 구간 줄과 동그라미 색이
            type(근무=accent, 교육=brand-300)에 따라 갈라진다.
-           상세는 호버로, 터치/키보드에선 동그라미 포커스로 뜬다. -->
+           상세는 호버 · 포커스로 잠깐, 클릭 · 탭으로 고정해서 열린다. -->
       <div v-if="experience.length">
         <div class="mb-8 flex justify-end gap-5 text-xs text-content-subtle">
           <span class="flex items-center gap-1.5">
@@ -76,7 +94,9 @@ import { experience, profile } from '~/data/portfolio'
           <li
             v-for="(item, i) in experience"
             :key="item.organization + item.period"
-            class="group relative flex-1"
+            class="relative flex-1"
+            @mouseenter="hovered = i"
+            @mouseleave="hovered = null"
           >
             <!-- 이 항목이 차지하는 구간의 가로줄 -->
             <span
@@ -88,9 +108,18 @@ import { experience, profile } from '~/data/portfolio'
             <div class="flex flex-col items-center">
               <button
                 type="button"
-                class="relative z-10 size-[11px] rounded-full ring-4 ring-surface transition-transform group-hover:scale-125 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
-                :class="item.type === 'education' ? 'bg-brand-300' : 'bg-accent'"
+                class="relative z-10 size-[11px] rounded-full ring-4 ring-surface transition-transform focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+                :class="[
+                  item.type === 'education' ? 'bg-brand-300' : 'bg-accent',
+                  isOpen(i) ? 'scale-125' : 'scale-100',
+                ]"
                 :aria-label="`${item.organization} 상세 보기`"
+                :aria-expanded="isOpen(i)"
+                :aria-controls="`experience-${i}`"
+                @click="togglePin(i)"
+                @focus="hovered = i"
+                @blur="hovered = null"
+                @keydown.esc="pinned = null"
               />
               <p class="mt-4 px-1 text-center text-sm font-semibold">
                 {{ item.organization }}
@@ -100,14 +129,20 @@ import { experience, profile } from '~/data/portfolio'
               </p>
             </div>
 
-            <!-- 상세 카드: 줄 위로 뜬다. 첫/끝 항목은 화면 밖으로 새지 않게 가장자리 정렬 -->
+            <!-- 상세 카드: 줄 위로 뜬다. 첫/끝 항목은 화면 밖으로 새지 않게 가장자리 정렬.
+                 max-w 는 아주 좁은 화면에서 카드가 좌우로 삐져나오는 것을 막는 보루다. -->
             <div
-              class="pointer-events-none absolute bottom-full z-20 mb-4 w-64 translate-y-1 opacity-0 transition duration-300 ease-out-expo group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:translate-y-0 group-focus-within:opacity-100 sm:w-72"
-              :class="
+              :id="`experience-${i}`"
+              class="absolute bottom-full z-20 mb-4 w-64 max-w-[calc(100vw-3rem)] transition duration-300 ease-out-expo sm:w-72"
+              :class="[
                 i === 0 ? 'left-0'
                 : i === experience.length - 1 ? 'right-0'
-                : 'left-1/2 -translate-x-1/2'
-              "
+                : 'left-1/2 -translate-x-1/2',
+                isOpen(i)
+                  ? 'pointer-events-auto translate-y-0 opacity-100'
+                  : 'pointer-events-none translate-y-1 opacity-0',
+              ]"
+              :aria-hidden="!isOpen(i)"
             >
               <div
                 class="border bg-surface p-5 text-left"

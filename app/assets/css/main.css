@@ -30,10 +30,14 @@
   --color-content-subtle: var(--content-subtle);
   --color-line: var(--line);
 
-  /* 타이포그래피 */
+  /* 타이포그래피.
+     mono 는 웹폰트를 따로 싣지 않는다 — 기간 · 스택 라벨 같은 짧은 텍스트에만
+     쓰이므로 폰트 하나를 더 내려받을 값이 없다. 목록에 없는 이름을 적어두면
+     "지정했는데 왜 안 나오지" 로 이어지므로 실제로 존재하는 것만 남긴다. */
   --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
     system-ui, "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
 
   /* 섹션 리듬 */
   --spacing-section: 7.5rem;
@@ -56,7 +60,9 @@
   --surface-raised: oklch(1 0 0);
   --content: oklch(0.21 0.008 260);
   --content-muted: oklch(0.45 0.011 260);
-  --content-subtle: oklch(0.62 0.011 260);
+  /* subtle 은 0.625rem 짜리 작은 글자(기간 · 스택)에도 쓰인다.
+     흰 배경 대비 4.5:1 을 넘기려면 이 정도까지 내려와야 한다. */
+  --content-subtle: oklch(0.48 0.012 260);
   --line: oklch(0.91 0.004 260);
 }
 
@@ -68,7 +74,8 @@
   --surface-raised: oklch(0.23 0.011 265);
   --content: oklch(0.97 0.002 260);
   --content-muted: oklch(0.72 0.010 260);
-  --content-subtle: oklch(0.55 0.012 260);
+  /* 라이트와 같은 이유로 한 단계 밝게 (기존 0.55 는 4.5:1 미달) */
+  --content-subtle: oklch(0.62 0.012 260);
   --line: oklch(0.30 0.012 265);
 }
 
@@ -101,4 +108,18 @@
     background-color: var(--color-brand-500);
     color: white;
   }
+}
+
+/* 인트로 첫 페인트 숨김.
+   서버가 내보내는 HTML 은 '연출 완료' 상태(= 다 보이는 상태)다. 연출을 실제로
+   재생할 때만 nuxt.config.ts 의 인라인 스크립트가 html[data-intro="play"] 를
+   붙이고, 그 사이에 하이드레이션이 끝나기 전까지 이 규칙이 대상들을 숨긴다.
+   그래서 JS 가 없으면 이 규칙은 아예 적용되지 않고 페이지가 그대로 보인다.
+
+   @layer 안에 두면 안 된다 — Tailwind 의 utilities 레이어가 뒤에 오므로
+   opacity-100 에게 특이도와 무관하게 밀린다. 레이어 밖 선언이라야 이긴다.
+   연출이 끝나면 useIntro.ts 가 data-intro 를 지워 이 규칙을 무력화한다. */
+html[data-intro="play"] [data-intro-target] {
+  opacity: 0;
+  pointer-events: none;
 }

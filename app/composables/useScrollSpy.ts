@@ -26,16 +26,34 @@ export function useScrollSpy(ids: readonly string[]) {
 
     targets.forEach((el) => observer.observe(el))
 
-    // 맨 위(히어로)로 돌아오면 어떤 섹션도 활성이 아니어야 한다
-    const onScroll = () => {
-      if (window.scrollY < window.innerHeight * 0.5) active.value = ''
+    const lastId = ids[ids.length - 1] ?? ''
+
+    const sync = () => {
+      // 맨 위(히어로)로 돌아오면 어떤 섹션도 활성이 아니어야 한다
+      if (window.scrollY < window.innerHeight * 0.5) {
+        active.value = ''
+        return
+      }
+
+      // 마지막 섹션(Contact)은 짧고 그 아래 푸터도 얇아서, 문서 끝까지
+      // 내려도 관측 띠 안으로 들어오지 못하는 경우가 있다. 그러면 끝까지
+      // 내렸는데 Projects 가 계속 활성으로 남는다. 바닥에 닿으면 마지막
+      // 항목을 활성으로 고정해 그 상황을 막는다.
+      const atBottom
+        = window.innerHeight + window.scrollY
+          >= document.documentElement.scrollHeight - 2
+      if (atBottom) active.value = lastId
     }
-    window.addEventListener('scroll', onScroll, { passive: true })
-    onScroll()
+
+    window.addEventListener('scroll', sync, { passive: true })
+    // 뷰포트가 바뀌면 바닥 판정 기준(scrollHeight)도 달라진다
+    window.addEventListener('resize', sync, { passive: true })
+    sync()
 
     onScopeDispose(() => {
       observer.disconnect()
-      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('scroll', sync)
+      window.removeEventListener('resize', sync)
     })
   })
 

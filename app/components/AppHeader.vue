@@ -18,8 +18,12 @@ const menuOpen = ref(false)
 </script>
 
 <template>
+  <!-- data-intro-target: 인트로가 재생될 때 첫 페인트부터 숨겨지는 대상 (main.css 참고).
+       bg-surface/80: 배경이 없으면 스크롤 중 프로젝트 카드 위를 지날 때
+       내비 텍스트가 카드의 글자 · 테두리와 겹쳐 읽히지 않는다. -->
   <header
-    class="fixed inset-x-0 top-0 z-50 backdrop-blur-xs transition-opacity duration-700"
+    data-intro-target
+    class="fixed inset-x-0 top-0 z-50 bg-surface/80 backdrop-blur-md transition-opacity duration-700"
     :class="introDone ? 'opacity-100' : 'pointer-events-none opacity-0'"
   >
     <div class="relative flex h-header items-center px-6 lg:px-8">
@@ -84,7 +88,7 @@ const menuOpen = ref(false)
           class="-mr-1 p-1 text-accent md:hidden"
           :aria-expanded="menuOpen"
           aria-controls="mobile-nav"
-          aria-label="메뉴 열기"
+          :aria-label="menuOpen ? '메뉴 닫기' : '메뉴 열기'"
           @click="menuOpen = !menuOpen"
         >
           <svg viewBox="0 0 24 24" class="size-6" fill="none" stroke="currentColor" stroke-width="1.75">

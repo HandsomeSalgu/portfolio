@@ -34,6 +34,21 @@ IntersectionObserver 로 처리합니다.
 
 **좌측 게이지 선** — `app/components/SideRule.vue` 가 스크롤 진행률을 받아 `scaleY` 를
 조절합니다. 아래로 내려갈수록 선이 위에서부터 짧아지고 맨 아래에서 사라집니다.
+모바일은 세로 게이지를 놓을 자리가 없어 같은 컴포넌트가 상단 진행 바로 대체합니다.
+
+**인트로 연출** — `app/composables/useIntro.ts` 가 4박자로 진행합니다. 여기서 방향이
+한 번 뒤집혀 있으니 주의해야 합니다.
+
+- **서버 렌더 결과는 항상 '연출 완료' 상태입니다.** 초기값을 0(아무것도 안 보임)으로
+  두면 JS 가 없거나 하이드레이션이 실패했을 때 페이지가 백지가 됩니다.
+- 연출을 *재생할 때만* `nuxt.config.ts` 의 인라인 스크립트가 페인트 전에
+  `html[data-intro="play"]` 를 붙이고, `main.css` 의 규칙이 `[data-intro-target]` 들을
+  숨깁니다. 이 규칙은 **`@layer` 밖에** 있어야 합니다 — 안에 두면 Tailwind 의
+  `utilities` 레이어가 뒤에 와서 `opacity-100` 에게 특이도와 무관하게 밀립니다.
+- 연출이 끝나면 `data-intro` 를 지워 규칙을 무력화합니다. 하이드레이션이 실패해
+  아무도 지우지 않는 경우를 대비해 인라인 스크립트에 5초 안전장치가 있습니다.
+- 재생을 건너뛰는 조건: **앵커로 진입한 경우**(`/#projects` 같은 공유 링크 —
+  연출이 스크롤을 맨 위로 되돌려버립니다), 이번 세션에 이미 본 경우, 모션 최소화.
 
 ## 프로젝트 구조
 
@@ -41,7 +56,7 @@ IntersectionObserver 로 처리합니다.
 app/
 ├── assets/css/main.css   디자인 토큰(@theme), 라이트/다크 색상 변수
 ├── components/           AppHeader, AppFooter, SideRule, BaseSection, Section*, Icon*
-├── composables/          useTheme, useScrollSpy, useScrollProgress
+├── composables/          useTheme, useIntro, useScrollSpy, useScrollProgress
 ├── data/portfolio.ts     화면에 들어가는 모든 콘텐츠
 ├── layouts/default.vue   헤더 + 본문 + 푸터 골격
 ├── pages/index.vue       섹션 조립
@@ -76,8 +91,9 @@ npx serve .output/public
 | `profile` | 이름, 히어로 문구, 소개 문단, 이메일, 지역 |
 | `socialLinks` | GitHub · Notion 등 외부 링크 |
 | `skillGroups` | 카테고리별 기술 목록 |
-| `projects` | 프로젝트 목록. 시작일 기준 오름차순으로 자동 정렬됩니다 |
+| `projects` | 프로젝트 목록. 시작일 기준 **내림차순**(최신부터)으로 자동 정렬됩니다 |
 | `experience` | 경력 타임라인 |
+| `siteUrl` | **배포 도메인. OG 이미지 · canonical 이 절대 URL 을 요구하므로 반드시 실제 값으로 교체해야 합니다** |
 
 각 항목의 타입은 `app/types/portfolio.ts` 에 정의되어 있으니 필드 이름과 필수 여부는
 그쪽을 참고하면 됩니다.
