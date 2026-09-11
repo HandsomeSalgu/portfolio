@@ -46,10 +46,10 @@ export const socialLinks: SocialLink[] = [
 
 export const skillGroups: SkillGroup[] = [
   { category: 'Front-end', items: ['HTML5', 'CSS3', 'JavaScript', 'Vue.js', 'React'] },
-  { category: 'Back-end', items: ['Java', 'Python', 'Spring Boot', 'MyBatis'] },
+  { category: 'Back-end', items: ['Java', 'Python', 'Spring Boot', 'MyBatis', 'JWT'] },
   { category: 'Database', items: ['MySQL', 'Oracle'] },
   // 태그라인("배포와 운영까지 고민")을 뒷받침하는 카테고리
-  { category: 'DevOps', items: ['Docker', 'Jenkins'] },
+  { category: 'DevOps', items: ['Docker', 'Jenkins', 'GitLab CI', 'nginx', 'AWS EC2'] },
   // 비전(직접 학습)과 LLM(활용)을 한 카테고리로. 학습 경험이 더 희소하므로 비전을 앞에 둔다
   { category: 'AI & ML', items: ['YOLO', 'PaddleOCR', 'Prompt Engineering', 'RAG', 'Gemini', 'Claude'] },
   { category: 'Certifications', items: ['정보처리기사', 'SQLD'] },
