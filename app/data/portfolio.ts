@@ -142,6 +142,31 @@ export const projects: Project[] = [
     ],
     links: [{ label: 'GitHub', href: 'https://github.com/HandsomeSalgu/CapShop' }],
   },
+  {
+    slug: 'dodo',
+    title: '도도',
+    summary: 'AIoT 기반 도서관 도서 이상 탐지 서비스',
+    period: '2026.07.13 - 2026.08.10',
+    role: 'AI · Vision 파이프라인(YOLO 객체 검출 · OCR 판독)',
+    teamSize: 6,
+    techStack: [
+      'Python',
+      'YOLO',
+      'PaddleOCR',
+      'PyTorch',
+      'TensorRT',
+      'ONNX',
+      'Roboflow',
+      'Jetson Orin Nano',
+    ],
+    highlights: [
+      '로봇이 촬영한 서가 이미지에서 YOLO로 책등과 청구기호 라벨의 바운딩 박스를 검출하는 모델 학습',
+      '검출된 라벨 영역만 잘라 OCR에 전달해 청구기호와 제목을 판독, 불필요한 배경을 제외해 인식 정확도 확보',
+      'Roboflow로 도서 청구기호 이미지 2,500장 라벨링 · 한국어 텍스트 35만 건 추가 학습으로 도서 식별 정확도 88% → 92% 향상',
+      '라벨 훼손 · 가림으로 판독이 어려운 도서는 판독 실패로 분류해 오인식 데이터가 판정 단계로 넘어가지 않도록 처리',
+      'ONNX · TensorRT로 변환해 Jetson Orin Nano 온디바이스 추론 환경에 적용',
+    ],
+  },
 ]
 
 /** 왼쪽(과거)부터 오른쪽(현재) 순서로 렌더된다 */
